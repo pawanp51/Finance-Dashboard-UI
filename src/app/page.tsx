@@ -22,7 +22,7 @@ export default function Home() {
   };
 
   const getIconForCategory = (category: string) => {
-    switch(category.toLowerCase()) {
+    switch (category.toLowerCase()) {
       case 'technology':
       case 'electronics': return <ShoppingBag size={18} className="text-orange-700" />;
       case 'investments': return <Banknote size={18} className="text-blue-700" />;
@@ -36,7 +36,7 @@ export default function Home() {
   };
 
   const getIconBg = (category: string) => {
-    switch(category.toLowerCase()) {
+    switch (category.toLowerCase()) {
       case 'technology':
       case 'electronics': return 'bg-orange-50';
       case 'investments': return 'bg-blue-50';
@@ -47,6 +47,29 @@ export default function Home() {
       case 'transportation': return 'bg-gray-100';
       default: return 'bg-gray-100';
     }
+  };
+
+  const handleExportCSV = () => {
+    const headers = ['Date', 'Description', 'Category', 'Type', 'Amount'];
+    const rows = filteredTransactions.map(tx => [
+      new Date(tx.date).toLocaleDateString('en-US'),
+      `"${tx.description}"`, // Handle commas
+      tx.category,
+      tx.type,
+      tx.amount.toString()
+    ]);
+
+    const csvContent = [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `transactions_${new Date().toISOString().split('T')[0]}.csv`;
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -66,7 +89,7 @@ export default function Home() {
           </p>
         </div>
         {role === 'ADMIN' && (
-          <button 
+          <button
             onClick={() => setIsModalOpen(true)}
             className="w-full md:w-auto bg-[#0a3296] hover:bg-blue-800 text-white px-5 py-2.5 rounded-full font-semibold shadow-sm transition-colors flex items-center justify-center text-sm"
           >
@@ -76,7 +99,7 @@ export default function Home() {
       </div>
 
       <SummaryCards />
-      
+
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         <div className="xl:col-span-2">
           <BalanceTrendChart />
@@ -89,15 +112,12 @@ export default function Home() {
       {/* Recent Transactions Section */}
       <div className="mt-10">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-           <h3 className="text-lg font-bold text-gray-900">Recent Transactions</h3>
-           <div className="flex items-center space-x-4 w-full md:w-auto">
-             <button className="flex-1 md:flex-none flex items-center justify-center px-4 py-2 md:py-1.5 text-xs font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors uppercase tracking-wider">
-                <Download size={12} className="mr-2" /> Export
-             </button>
-             <Link href="/transactions" className="flex-1 md:flex-none text-center text-sm font-bold text-blue-700 hover:text-blue-800 transition-colors">
-               View All Activity
-             </Link>
-           </div>
+          <h3 className="text-lg font-bold text-gray-900">Recent Transactions</h3>
+          <div className="flex items-center space-x-4 w-full md:w-auto">
+            <Link href="/transactions" className="flex-1 md:flex-none text-center text-sm font-bold text-blue-700 hover:text-blue-800 transition-colors">
+              View All Activity
+            </Link>
+          </div>
         </div>
 
         <div className="space-y-3">
@@ -131,9 +151,9 @@ export default function Home() {
         </div>
       </div>
 
-      <AddTransactionModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
+      <AddTransactionModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
       />
     </div>
   );

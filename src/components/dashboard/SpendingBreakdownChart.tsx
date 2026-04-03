@@ -38,7 +38,7 @@ export const SpendingBreakdownChart = () => {
           <p className="text-xs text-gray-500 font-semibold tracking-wider uppercase mt-1">Category Allocation</p>
         </div>
       </div>
-      
+
       <div className="flex-1 min-h-[250px] relative mt-4">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
@@ -56,13 +56,13 @@ export const SpendingBreakdownChart = () => {
                 <Cell key={`cell-${index}`} fill={data.length > 0 ? COLORS[index % COLORS.length] : '#f3f4f6'} />
               ))}
             </Pie>
-            {data.length > 0 && <Tooltip 
+            {data.length > 0 && <Tooltip
               formatter={(value: number) => `$${value.toLocaleString()}`}
               contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
             />}
           </PieChart>
         </ResponsiveContainer>
-        
+
         {/* Center Text */}
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
           <p className="text-2xl font-bold text-gray-900">

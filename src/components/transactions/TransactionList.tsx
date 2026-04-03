@@ -20,11 +20,11 @@ export const TransactionList = () => {
 
   const filteredTransactions = useMemo(() => {
     return transactions.filter(t => {
-      const matchSearch = t.description.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          t.category.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchSearch = t.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        t.category.toLowerCase().includes(searchTerm.toLowerCase());
       const matchCategory = categoryFilter === 'ALL' || t.category === categoryFilter;
       const matchType = typeFilter === 'ALL' || t.type === typeFilter;
-      
+
       return matchSearch && matchCategory && matchType;
     });
   }, [transactions, searchTerm, categoryFilter, typeFilter]);
@@ -46,11 +46,11 @@ export const TransactionList = () => {
       tx.type,
       tx.amount.toString()
     ]);
-    
+
     const csvContent = [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
-    
+
     const link = document.createElement("a");
     link.href = url;
     link.download = `transactions_${new Date().toISOString().split('T')[0]}.csv`;
@@ -67,7 +67,7 @@ export const TransactionList = () => {
           <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
             <div className="relative flex-1 w-full max-w-full xl:max-w-md">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-              <input 
+              <input
                 type="text"
                 placeholder="Search by description or category..."
                 className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-blue-100 focus:bg-white transition-all outline-none"
@@ -75,10 +75,10 @@ export const TransactionList = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            
+
             <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 w-full xl:w-auto">
               <div className="relative w-full sm:w-auto flex-1 sm:flex-none">
-                <select 
+                <select
                   className="w-full appearance-none pl-4 pr-10 py-2.5 bg-gray-50 border-none rounded-xl text-sm text-gray-700 font-medium focus:ring-2 focus:ring-blue-100 outline-none cursor-pointer"
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
@@ -89,7 +89,7 @@ export const TransactionList = () => {
               </div>
 
               <div className="relative w-full sm:w-auto flex-1 sm:flex-none">
-                <select 
+                <select
                   className="w-full appearance-none pl-4 pr-10 py-2.5 bg-gray-50 border-none rounded-xl text-sm text-gray-700 font-medium focus:ring-2 focus:ring-blue-100 outline-none cursor-pointer"
                   value={typeFilter}
                   onChange={(e) => setTypeFilter(e.target.value)}
@@ -99,16 +99,16 @@ export const TransactionList = () => {
                   <option value="EXPENSE">Expense</option>
                 </select>
               </div>
-              
-              <button 
+
+              <button
                 onClick={handleExportCSV}
                 className="flex items-center justify-center px-4 py-2.5 text-sm font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors w-full sm:w-auto flex-shrink-0"
               >
-                 <Download size={16} className="mr-2" /> Export
+                <Download size={16} className="mr-2" /> Export
               </button>
 
               {role === 'ADMIN' && (
-                <button 
+                <button
                   onClick={() => setIsModalOpen(true)}
                   className="flex-shrink-0 bg-blue-600 hover:bg-blue-700 text-white p-2.5 rounded-xl shadow-sm transition-colors flex items-center justify-center sm:ml-auto xl:ml-0"
                 >
@@ -140,7 +140,7 @@ export const TransactionList = () => {
                     <td className="px-6 py-4">
                       <div className="flex items-center">
                         <div className={`p-2 rounded-lg mr-3 ${tx.type === 'INCOME' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'}`}>
-                           {tx.type === 'INCOME' ? <ArrowUpCircle size={18} /> : <ArrowDownCircle size={18} />}
+                          {tx.type === 'INCOME' ? <ArrowUpCircle size={18} /> : <ArrowDownCircle size={18} />}
                         </div>
                         <span className="font-semibold text-gray-900">{tx.description}</span>
                       </div>
@@ -155,7 +155,7 @@ export const TransactionList = () => {
                     </td>
                     {role === 'ADMIN' && (
                       <td className="px-6 py-4 whitespace-nowrap text-right">
-                        <button 
+                        <button
                           onClick={() => deleteTransaction(tx.id)}
                           className="text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
                           title="Delete Transaction"
@@ -181,10 +181,10 @@ export const TransactionList = () => {
           </table>
         </div>
       </div>
-      
-      <AddTransactionModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
+
+      <AddTransactionModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
       />
     </>
   );
