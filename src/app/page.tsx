@@ -49,29 +49,6 @@ export default function Home() {
     }
   };
 
-  const handleExportCSV = () => {
-    const headers = ['Date', 'Description', 'Category', 'Type', 'Amount'];
-    const rows = filteredTransactions.map(tx => [
-      new Date(tx.date).toLocaleDateString('en-US'),
-      `"${tx.description}"`, // Handle commas
-      tx.category,
-      tx.type,
-      tx.amount.toString()
-    ]);
-
-    const csvContent = [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `transactions_${new Date().toISOString().split('T')[0]}.csv`;
-    link.style.display = 'none';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-2">
