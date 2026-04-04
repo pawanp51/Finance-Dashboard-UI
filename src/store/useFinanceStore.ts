@@ -20,7 +20,10 @@ interface FinanceState {
   transactions: Transaction[];
   role: Role;
   filters: Filters;
-  
+  goals: Record<string, { target: number; current: number }>;
+  isLoading: boolean;
+  isInitialized: boolean;
+
   // Actions
   addTransaction: (transaction: Omit<Transaction, 'id'>) => void;
   updateTransaction: (id: string, transaction: Omit<Transaction, 'id'>) => void;
@@ -28,15 +31,11 @@ interface FinanceState {
   setRole: (role: Role) => void;
   setFilters: (filters: Partial<Filters>) => void;
   resetFilters: () => void;
+  updateGoal: (name: string, target: number) => void;
+  fetchInitialData: () => Promise<void>;
 }
 
-const initialTransactions: Transaction[] = [
-  { id: '1', date: '2023-10-24', description: 'Cloud Infrastructure Svc', amount: 12450.00, category: 'TECHNOLOGY', type: 'EXPENSE' },
-  { id: '2', date: '2023-10-22', description: 'Dividend Payout - Q3', amount: 45200.00, category: 'INVESTMENTS', type: 'INCOME' },
-  { id: '3', date: '2023-10-19', description: 'Legal Advisory Retainer', amount: 8500.00, category: 'PROFESSIONAL', type: 'EXPENSE' },
-  { id: '4', date: '2023-10-15', description: 'Real Estate Rental', amount: 18900.00, category: 'REAL ESTATE', type: 'INCOME' },
-  { id: '5', date: '2023-10-12', description: 'Private Jet Charter', amount: 32100.00, category: 'LIFESTYLE', type: 'EXPENSE' },
-];
+const initialTransactions: Transaction[] = [];
 
 export const useFinanceStore = create<FinanceState>()(
   persist(
@@ -44,6 +43,11 @@ export const useFinanceStore = create<FinanceState>()(
       transactions: initialTransactions,
       role: 'ADMIN',
       filters: { search: '', category: 'ALL', type: 'ALL' },
+      goals: {
+        vacation: { target: 10000, current: 7500 }
+      },
+      isLoading: false,
+      isInitialized: false,
 
       addTransaction: (transaction) => {
         if (get().role !== 'ADMIN') return;
@@ -77,6 +81,33 @@ export const useFinanceStore = create<FinanceState>()(
       })),
       
       resetFilters: () => set({ filters: { search: '', category: 'ALL', type: 'ALL' } }),
+
+      updateGoal: (name, target) => set((state) => ({
+        goals: {
+          ...state.goals,
+          [name]: { ...state.goals[name], target }
+        }
+      })),
+
+      fetchInitialData: async () => {
+        const { transactions, isInitialized } = get();
+        
+        // Only seed if we haven't already and there are no transactions
+        if (isInitialized || transactions.length > 0) return;
+
+        set({ isLoading: true });
+        try {
+          const response = await fetch('/api/seed');
+          const data = await response.json();
+          if (data.status === 'success') {
+            set({ transactions: data.transactions, isInitialized: true });
+          }
+        } catch (error) {
+          console.error("Failed to fetch initial data:", error);
+        } finally {
+          set({ isLoading: false });
+        }
+      },
     }),
     {
       name: 'finance-storage',

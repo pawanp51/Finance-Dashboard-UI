@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { useFinanceStore } from '@/store/useFinanceStore';
-import { Search, Filter, Plus, Trash2, ArrowUpCircle, ArrowDownCircle, Download } from 'lucide-react';
+import { Search, Filter, Plus, Trash2, ArrowUpCircle, ArrowDownCircle, Download, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import { Transaction } from '@/types/finance';
 import { AddTransactionModal } from './AddTransactionModal';
 
@@ -12,6 +12,7 @@ export const TransactionList = () => {
   const [categoryFilter, setCategoryFilter] = useState('ALL');
   const [typeFilter, setTypeFilter] = useState('ALL');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
 
   const categories = useMemo(() => {
     const cats = new Set(transactions.map(t => t.category));
@@ -19,7 +20,7 @@ export const TransactionList = () => {
   }, [transactions]);
 
   const filteredTransactions = useMemo(() => {
-    return transactions.filter(t => {
+    let result = transactions.filter(t => {
       const matchSearch = t.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
         t.category.toLowerCase().includes(searchTerm.toLowerCase());
       const matchCategory = categoryFilter === 'ALL' || t.category === categoryFilter;
@@ -27,7 +28,22 @@ export const TransactionList = () => {
 
       return matchSearch && matchCategory && matchType;
     });
-  }, [transactions, searchTerm, categoryFilter, typeFilter]);
+
+    if (sortOrder) {
+      result.sort((a, b) => {
+        if (sortOrder === 'asc') return a.amount - b.amount;
+        return b.amount - a.amount;
+      });
+    }
+
+    return result;
+  }, [transactions, searchTerm, categoryFilter, typeFilter, sortOrder]);
+
+  const toggleSort = () => {
+    if (sortOrder === 'asc') setSortOrder('desc');
+    else if (sortOrder === 'desc') setSortOrder(null);
+    else setSortOrder('asc');
+  };
 
   const formatCurrency = (amount: number, type: 'INCOME' | 'EXPENSE') => {
     const formatted = new Intl.NumberFormat('en-US', {
@@ -126,7 +142,19 @@ export const TransactionList = () => {
                 <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
                 <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Description</th>
                 <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Category</th>
-                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Amount</th>
+                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">
+                  <button
+                    onClick={toggleSort}
+                    className="inline-flex items-center hover:text-gray-900 transition-colors uppercase tracking-wider"
+                  >
+                    Amount
+                    <span className="ml-1">
+                      {sortOrder === 'asc' && <ArrowUp size={14} />}
+                      {sortOrder === 'desc' && <ArrowDown size={14} />}
+                      {!sortOrder && <ArrowUpDown size={14} />}
+                    </span>
+                  </button>
+                </th>
                 {role === 'ADMIN' && <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Actions</th>}
               </tr>
             </thead>
