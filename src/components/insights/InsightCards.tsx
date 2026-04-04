@@ -257,13 +257,15 @@ export const InsightCards = () => {
         
         <div className="space-y-4">
           {insightsData.recurring.length > 0 ? insightsData.recurring.map((sub, i) => (
-            <div key={i} className="flex justify-between items-center py-2 px-4 hover:bg-gray-50 rounded-xl transition-colors group">
-              <div className="flex items-center space-x-4">
-                <div className="w-8 h-8 rounded bg-gray-100 flex items-center justify-center text-[10px] font-bold text-gray-600">{sub.initials}</div>
-                <span className="text-sm font-bold text-gray-900 w-40 truncate">{sub.name}</span>
-                <span className="text-xs font-medium text-blue-500 w-16 md:w-24">{sub.period}</span>
+            <div key={i} className="flex justify-between items-center py-3 px-3 sm:px-4 hover:bg-gray-50 rounded-xl transition-colors group overflow-hidden">
+              <div className="flex items-center space-x-3 sm:space-x-4 flex-1 min-w-0">
+                <div className="w-8 h-8 flex-shrink-0 rounded bg-gray-100 flex items-center justify-center text-[10px] font-bold text-gray-600">{sub.initials}</div>
+                <div className="flex-1 min-w-0 flex flex-col sm:flex-row sm:items-center sm:space-x-4">
+                  <span className="text-sm font-bold text-gray-900 truncate">{sub.name}</span>
+                  <span className="text-[10px] sm:text-xs font-medium text-blue-500 uppercase tracking-wider">{sub.period}</span>
+                </div>
               </div>
-              <span className="text-sm font-bold text-gray-900">${sub.amount.toLocaleString()}</span>
+              <span className="text-sm font-bold text-gray-900 ml-4 flex-shrink-0">${sub.amount.toLocaleString()}</span>
             </div>
           )) : (
             <div className="py-8 text-center text-gray-400 text-sm italic">
