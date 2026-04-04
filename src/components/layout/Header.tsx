@@ -21,12 +21,12 @@ export const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
         <h1 className="text-lg md:text-xl font-extrabold text-blue-900 mr-4 md:mr-8 truncate hidden sm:block">The Financial Architect</h1>
 
         {/* Global Search Bar */}
-        <div className="relative flex-1 max-w-md w-full md:block">
+        <div className="relative flex-1 border-2 border-gray-200 rounded-full max-w-md w-full md:block">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
           <input
             type="text"
             placeholder="Search..."
-            className="w-full pl-10 pr-4 py-2 bg-gray-100/80 border-none rounded-full text-sm focus:ring-2 focus:ring-blue-100 focus:bg-white transition-all outline-none"
+            className="w-full text-gray-400 pl-10 pr-4 py-2 bg-gray-100/80 border-none rounded-full text-sm focus:ring-2 focus:ring-blue-100 focus:bg-white transition-all outline-none"
           />
         </div>
       </div>

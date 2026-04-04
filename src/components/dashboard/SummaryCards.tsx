@@ -2,12 +2,19 @@
 
 import React, { useMemo } from 'react';
 import { useFinanceStore } from '@/store/useFinanceStore';
+import { mockTransactions } from '@/mocks/data';
 import { ArrowUpRight, ArrowDownRight, Edit2, Wallet } from 'lucide-react';
 
 export const SummaryCards = () => {
   const { transactions } = useFinanceStore();
 
   const { income, expense, balance } = useMemo(() => {
+    // 1. Calculate Mock Baseline (Before April 2026)
+    const mockBaseline = mockTransactions
+      .filter(tx => new Date(tx.date) < new Date('2026-04-01'))
+      .reduce((acc, tx) => tx.type === 'INCOME' ? acc + tx.amount : acc - tx.amount, 0);
+
+    // 2. Reduce store transactions
     return transactions.reduce(
       (acc, tx) => {
         if (tx.type === 'INCOME') {
@@ -19,7 +26,7 @@ export const SummaryCards = () => {
         }
         return acc;
       },
-      { income: 0, expense: 0, balance: 0 }
+      { income: 0, expense: 0, balance: mockBaseline }
     );
   }, [transactions]);
 
